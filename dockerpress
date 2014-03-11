@@ -93,8 +93,8 @@ if __name__ == "__main__":
     if not (options.url):
         parser.error("You must provide a URL to create a site for")
     if not (re.search('^([a-z0-9-]+\.[a-z]{2,4})$', options.url)):
-        parser.error(('The given url is not a valid domain')
-
+        parser.error('The given url is not a valid domain')
+    
     container_id = create_docker_container(options.url)
     nginx_conf = create_nginx_config(container_id)
 
