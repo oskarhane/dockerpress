@@ -1,7 +1,18 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+# Written by Oskar Hane <oh@oskarhane.com>
+
+import subprocess
+import sys
+import re
+import shutil
 
 from optparse import OptionParser
 
+def create_docker_container(url):
+    command = ["docker run -d -p 80 -p 22 -name '" + url + "' docker-wordpress-nginx-ssh"]
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    output, err = p.communicate()
+    container_id = output.decode("utf-8")
 
 if __name__ == "__main__":
     usage = "usage: %prog [options]"
@@ -12,4 +23,5 @@ if __name__ == "__main__":
 
     if not (options.url):
         parser.error("You must provide a URL to create a site for")
-
+    if not (re.search('^([a-z0-9-]+\.[a-z]{2,4})$', options.url)):
+        parser.error(('The given url is not a valid domain')
