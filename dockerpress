@@ -9,21 +9,21 @@ import shutil
 from optparse import OptionParser
 
 def create_nginx_config(container_id):
-    command = ["docker ps | grep " + container_id]
+    command = ["docker ps | grep " + container_id[:6]]
     p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     output, err = p.communicate()
     d_str = output.decode("utf-8")
-    
+
     domain = re.findall('\s([\S]+)\s*$', d_str)
 
     if not (re.search('(\.[a-z]{2,4})$', domain[0])):
         return 'Not a domain'
 
-    port = get_docker_http_port(container_id)
+    port = get_docker_http_port(container_id[:6])
     if not(port):
         return 'Port 80 not open'
 
-    conf_test = write_and_test_nginx_config(container_id, domain[0], port)
+    conf_test = write_and_test_nginx_config(container_id[:6], domain[0], port)
     if not(conf_test):
         return 'Error in Nginx config. Check file.'
     return True
@@ -53,10 +53,11 @@ def get_docker_http_port(container_id):
     p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     output, err = p.communicate()
     port_str = output.decode("utf-8")
-    port = re.search(':([0-9]+)$', port_str)
-    if not(port):
+    port = re.search(':([0-9]+)\s*$', port_str)
+
+    if not(port.group(1)):
         return False
-    return port[0]
+    return port.group(1)
 
 def get_nginx_conf(container_id, url, http_port):
     listen_str = 'upstream ' + container_id + " {\n"
@@ -98,7 +99,7 @@ if __name__ == "__main__":
     container_id = create_docker_container(options.url)
     nginx_conf = create_nginx_config(container_id)
 
-    if(nginx_conf === True):
+    if(nginx_conf == True):
         print('All ok, you can safetly reload nginx now. service nginx reload')
     else:
         print('Nginx config failed. Please check file /etc/nginx/sites-available/' + options.url)
