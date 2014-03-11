@@ -98,7 +98,7 @@ if __name__ == "__main__":
     container_id = create_docker_container(options.url)
     nginx_conf = create_nginx_config(container_id)
 
-    if(nginx === True):
+    if(nginx_conf === True):
         print('All ok, you can safetly reload nginx now. service nginx reload')
     else:
         print('Nginx config failed. Please check file /etc/nginx/sites-available/' + options.url)
