@@ -16,9 +16,6 @@ def create_nginx_config(container_id):
 
     domain = re.findall('\s([\S]+)\s*$', d_str)
 
-    if not (re.search('(\.[a-z]{2,4})$', domain[0])):
-        return 'Not a domain'
-
     port = get_docker_http_port(container_id[:6])
     if not(port):
         return 'Port 80 not open'
@@ -93,7 +90,7 @@ if __name__ == "__main__":
 
     if not (options.url):
         parser.error("You must provide a URL to create a site for")
-    if not (re.search('^([a-z0-9-]+\.[a-z]{2,4})$', options.url)):
+    if not (re.search('^([a-z0-9\.-]+\.[a-z]{2,4})$', options.url)):
         parser.error('The given url is not a valid domain')
     
     container_id = create_docker_container(options.url)
