@@ -75,7 +75,7 @@ def get_nginx_conf(container_id, url, http_port):
     return listen_str
 
 def create_docker_container(url):
-    command = ["docker run -d -t -p 80 -p 22 -name '" + url + "' oskarhane/docker-wordpress-nginx-ssh"]
+    command = ["docker run -d -t -p 80 -p 22 -h '" + url + "' -name '" + url + "' oskarhane/docker-wordpress-nginx-ssh"]
     p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     output, err = p.communicate()
     container_id = output.decode("utf-8")
